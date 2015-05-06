@@ -75,7 +75,7 @@ check_for_native_libs() {
 recreate_dirs() {
     run_command "rm -r -f ${PARENT_DIR}"
     if [ -n ${SECOR_LOCAL_S3} ]; then
-        run_command "s3cmd -c ${CONF_DIR}/test.s3cfg ls ${S3_LOGS_DIR} | awk '{ print \$4 }' | xargs -L 1 s3cmd -c ${CONF_DIR}/test.s3cfg del"
+        run_command "rm -rf /tmp/fakes3/${BUCKET}/secor_dev"
     else
         run_command "s3cmd del --recursive ${S3_LOGS_DIR}"
     fi
