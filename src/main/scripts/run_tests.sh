@@ -64,6 +64,7 @@ run_command() {
 }
 
 check_for_native_libs() {
+    [ -e /usr/lib64/libhadoop.so ] && cp /usr/lib64/libhadoop.so ${HADOOP_NATIVE_LIB_PATH}
     files=($(find "${HADOOP_NATIVE_LIB_PATH}" -maxdepth 1 -name "*.so" 2> /dev/null))
     if [ ${#files[@]} -eq 0 ]; then
         echo "Couldn't find Hadoop native libraries, skipping compressed binary tests"
