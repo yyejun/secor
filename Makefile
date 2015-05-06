@@ -20,3 +20,4 @@ integration: build
 
 test: build unit integration
 
+.PHONY: build unit integration test
