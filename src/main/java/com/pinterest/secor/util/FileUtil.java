@@ -46,10 +46,10 @@ public class FileUtil {
             conf.set("fs.s3n.awsSecretAccessKey", mConfig.getAwsSecretKey());
             // if access key is absent, s3a will attempt to use IAM role-based authentication.
             if (!mConfig.getAwsAccessKey().isEmpty()) {
-                conf.set("fs.s3a.awsAccessKeyId", mConfig.getAwsAccessKey());
+                conf.set("fs.s3a.access.key", mConfig.getAwsAccessKey());
             }
             if (!mConfig.getAwsSecretKey().isEmpty()) {
-                conf.set("fs.s3a.awsSecretAccessKey", mConfig.getAwsSecretKey());
+                conf.set("fs.s3a.secret.key", mConfig.getAwsSecretKey());
             }
         }
         return FileSystem.get(URI.create(path), conf);
