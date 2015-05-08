@@ -41,7 +41,7 @@ S3_LOGS_DIR=s3://${BUCKET}/secor_dev
 MESSAGES=1000
 MESSAGE_TYPE=binary
 # For the compression tests to work, set this to the path of the Hadoop native libs.
-HADOOP_NATIVE_LIB_PATH=lib
+HADOOP_NATIVE_LIB_PATH=${HADOOP_NATIVE_LIB_PATH:-lib}
 # by default additional opts is empty
 ADDITIONAL_OPTS=
 
@@ -64,7 +64,6 @@ run_command() {
 }
 
 check_for_native_libs() {
-    [ -e /usr/lib64/libhadoop.so ] && cp /usr/lib64/libhadoop.so ${HADOOP_NATIVE_LIB_PATH}
     files=($(find "${HADOOP_NATIVE_LIB_PATH}" -maxdepth 1 -name "*.so" 2> /dev/null))
     if [ ${#files[@]} -eq 0 ]; then
         echo "Couldn't find Hadoop native libraries, skipping compressed binary tests"
