@@ -45,8 +45,8 @@ public class FileUtil {
             conf.set("fs.s3n.awsAccessKeyId", mConfig.getAwsAccessKey());
             conf.set("fs.s3n.awsSecretAccessKey", mConfig.getAwsSecretKey());
             // if access key is absent, s3a will attempt to use IAM role-based authentication.
-            conf.set("fs.s3a.threads.max", "1024");
-            conf.set("fs.s3a.threads.keepalivetime", "600");
+            conf.set("fs.s3a.threads.core", "64");
+            conf.set("fs.s3a.threads.max", "64");
             if (!mConfig.getAwsAccessKey().isEmpty()) {
                 conf.set("fs.s3a.access.key", mConfig.getAwsAccessKey());
             }
