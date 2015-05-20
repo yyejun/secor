@@ -29,6 +29,8 @@ import com.pinterest.secor.io.FileWriter;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.io.compress.Compressor;
+import org.apache.hadoop.io.compress.CodecPool;
 
 import com.google.common.io.CountingOutputStream;
 import com.pinterest.secor.common.LogFilePath;
@@ -95,14 +97,21 @@ public class DelimitedTextFileReaderWriterFactory implements FileReaderWriterFac
     protected class DelimitedTextFileWriter implements FileWriter {
         private final CountingOutputStream mCountingStream;
         private final BufferedOutputStream mWriter;
+        private final Compressor mCompressor;
 
         public DelimitedTextFileWriter(LogFilePath path, CompressionCodec codec) throws IOException {
             Path fsPath = new Path(path.getLogFilePath());
             FileSystem fs = FileUtil.getFileSystem(path.getLogFilePath());
             this.mCountingStream = new CountingOutputStream(fs.create(fsPath));
-            this.mWriter = (codec == null) ? new BufferedOutputStream(
-                    this.mCountingStream) : new BufferedOutputStream(
-                    codec.createOutputStream(this.mCountingStream));
+            if (codec != null) {
+                mCompressor = CodecPool.getCompressor(codec);
+                this.mWriter = new BufferedOutputStream(
+                    codec.createOutputStream(this.mCountingStream, mCompressor));
+            } else {
+                mCompressor = null;
+                this.mWriter = new BufferedOutputStream(
+                    this.mCountingStream);
+            }
         }
 
         @Override
@@ -120,6 +129,9 @@ public class DelimitedTextFileReaderWriterFactory implements FileReaderWriterFac
         @Override
         public void close() throws IOException {
             this.mWriter.close();
+            if (mCompressor != null) {
+                CodecPool.returnCompressor(mCompressor);
+            }
         }
     }
 }
