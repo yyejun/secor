@@ -34,12 +34,14 @@ import java.util.Arrays;
  */
 public class FileUtil {
     private static SecorConfig mConfig = null;
+    private static Configuration mHadoopConf = null;
 
     public static void configure(SecorConfig config) {
         mConfig = config;
     }
 
-    public static FileSystem getFileSystem(String path) throws IOException {
+    private static Configuration getHadoopConf() {
+        if (mHadoopConf != null) return mHadoopConf;
         Configuration conf = new Configuration();
         if (mConfig != null) {
             conf.set("fs.s3n.awsAccessKeyId", mConfig.getAwsAccessKey());
@@ -54,8 +56,13 @@ public class FileUtil {
             if (!mConfig.getAwsSecretKey().isEmpty()) {
                 conf.set("fs.s3a.secret.key", mConfig.getAwsSecretKey());
             }
+            mHadoopConf = conf;
+            return conf;
         }
-        return FileSystem.get(URI.create(path), conf);
+        return conf;
+    }
+    public static FileSystem getFileSystem(String path) throws IOException {
+        return FileSystem.get(URI.create(path), getHadoopConf());
     }
 
     public static String[] list(String path) throws IOException {
