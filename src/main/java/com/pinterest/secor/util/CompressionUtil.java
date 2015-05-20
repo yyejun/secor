@@ -28,11 +28,10 @@ import org.apache.hadoop.io.compress.CompressionCodecFactory;
  *
  */
 public class CompressionUtil {
-
+    private static final CompressionCodecFactory ccf = new CompressionCodecFactory(
+                new Configuration());
     public static CompressionCodec createCompressionCodec(String className)
             throws Exception {
-        CompressionCodecFactory ccf = new CompressionCodecFactory(
-                new Configuration());
         return ccf.getCodecByClassName(className);
     }
 }
